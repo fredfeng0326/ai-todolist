@@ -1,0 +1,75 @@
+{
+  "name": "backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/backend/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/packages/backend",
+        "main": "packages/backend/src/main.ts",
+        "tsConfig": "packages/backend/tsconfig.app.json",
+        "tsPlugins": [
+          {
+            "name": "@nestjs/swagger/plugin"
+          }
+        ],
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "packages/backend/src/assets/",
+            "output": "./assets/"
+          }
+        ],
+        "webpackConfig": "packages/backend/webpack.config.js",
+        "generatePackageJson": true
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "backend:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "backend:build:development"
+        },
+        "production": {
+          "buildTarget": "backend:build:production"
+        }
+      }
+    },
+    "mig-gen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "typeorm-ts-node-commonjs -d ./src/app/data-source.ts migration:generate ./src/app/migrations/{args.name}",
+        "cwd": "packages/backend"
+      }
+    },
+    "mig-run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx build backend && NODE_OPTIONS='-r dotenv/config' typeorm migration:run -d dist/packages/backend/data-source.js"
+      }
+    },
+    "mig-revert": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx build candypig-backend && NODE_OPTIONS='-r dotenv/config' typeorm migration:revert -d dist/packages/backend/data-source.js"
+      }
+    }
+  }
+}

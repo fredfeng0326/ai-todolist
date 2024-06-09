@@ -1,0 +1,6 @@
+export enum StepType {
+  FINISH = 'FINISH',
+  CLOSED = 'CLOSED',
+  UNFINISHED = 'UNFINISHED',
+  CANCELED = 'CANCELED',
+}

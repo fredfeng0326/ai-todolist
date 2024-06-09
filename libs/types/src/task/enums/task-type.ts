@@ -1,0 +1,6 @@
+export enum TaskType {
+  FINISH = 'FINISH',
+  CLOSED = 'CLOSED',
+  UNFINISHED = 'UNFINISHED',
+  CANCELED = 'CANCELED',
+}
